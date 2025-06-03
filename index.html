@@ -158,7 +158,13 @@
       first();
     });
     document.getElementById('global').addEventListener('click', () => {
-      throw new Error("This is a global error triggered on purpose.");
+      try {
+        let result = fakeFunction();
+      } catch (err) {
+        console.error("Error in try/catch block", err);
+      } finally {
+        console.log("Step 3 finished, error caught inside a try/catch block");
+      }
     });
   </script>
 </body>
