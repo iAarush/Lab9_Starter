@@ -47,6 +47,18 @@
       width: 122px;
     }
   </style>
+
+
+<script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+<script>
+  window.TrackJS && TrackJS.install({ 
+    token: "b09e864ac6b94f0da3821e7e6dccbca1"
+    // for more configuration options, see https://docs.trackjs.com
+    
+  });
+</script>
+
+
 </head>
 
 <body>
@@ -84,6 +96,8 @@
       <button id="end-timer">End Timer</button>
       <button id="trace">Console Trace</button>
       <button id="global">Trigger a Global Error</button>
+      <button id="custom">😼 Help Aarush learn about custom errors</button>
+      <button id="window-error">Global Error via window.onerror</button>
     </section>
   </main>
 
@@ -166,6 +180,55 @@
         console.log("Step 3 finished, error caught inside a try/catch block");
       }
     });
+
+    class smirkingCatError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "smirkingCatError";
+      }
+    }
+
+    document.getElementById('custom').addEventListener('click', () => {
+      try {
+        const isCatHappy = false;
+
+        if (!isCatHappy) {
+          throw new smirkingCatError("The cat gods do not take pity on you today");
+        }
+
+        console.log("Meow: ", isCatHappy);
+
+      } catch (err) {
+        if (err instanceof smirkingCatError) {
+          console.error("Custom cat error caught:", err.message);
+        } else {
+          console.error("Error caught, but not custom:", err);
+        }
+      } finally {
+        console.log("Maybe the cat gods will take pity on you next time.");
+      }
+    });
+
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.log("Global error caught by window.onerror:");
+      console.log("→ Message:", message);
+      console.log("→ Source:", source);
+      console.log("→ Line:", lineno, "Column:", colno);
+      console.log("→ Error object:", error);
+      return false;
+    };
+    document.getElementById('window-error').addEventListener('click', () => {
+      try {
+        setTimeout(() => {
+          throw new smirkingCatError("Async smirking cat error"); 
+        }, 0);
+      } catch (err) {
+        console.error("Caught in try/catch:", err);
+      } finally {
+        console.log("Async error was triggered — waiting for window.onerror...");
+      }
+    });
+
   </script>
 </body>
 
